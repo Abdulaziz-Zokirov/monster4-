@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Монстр с крыши</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Unbounded', sans-serif;
+      background-color: #0c0c0c;
+      color: white;
+    }
+    .fade-in { animation: fadeIn 0.6s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hover-cover:hover .read-btn {
+      opacity: 1;
+    }
+    .read-btn {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      opacity: 0;
+    }
+    .read-btn:hover {
+      transform: scale(1.05);
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    .nav-btn {
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    .nav-btn:hover {
+      color: white;
+      transform: translateY(-2px);
+    }
+    .mobile-nav-btn {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .mobile-nav-btn:hover {
+      background-color: #333;
+      transform: translateX(5px);
+    }
+    .page-btn {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .page-btn:hover:not(:disabled) {
+      background-color: #555;
+      transform: scale(1.05);
+    }
+    .characters-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .characters-content img {
+      max-width: 300px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    @media (max-width: 768px) {
+      .mobile-menu {
+        display: block;
+      }
+      .desktop-menu {
+        display: none;
+      }
+      .characters-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      .characters-content img {
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="bg-[#111] py-4 shadow sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
+    <div>
+      <h1 class="text-2xl font-bold">Монстр с крыши</h1>
+      <p class="text-sm text-gray-400">Автор: Урахара Киска</p>
+    </div>
+    <nav class="hidden md:flex desktop-menu space-x-6 text-gray-300 items-center">
+      <button onclick="showSection('cover')" class="nav-btn hover:text-white">Главная</button>
+      <button onclick="showSection('book')" class="nav-btn hover:text-white">Книга</button>
+      <button onclick="showSection('plan')" class="nav-btn hover:text-white">Планы</button>
+      <button onclick="showSection('characters')" class="nav-btn hover:text-white">Персонажи</button>
+      <button onclick="showSection('about')" class="nav-btn hover:text-white">О книге</button>
+      <button onclick="showSection('contact')" class="nav-btn hover:text-white">Контакты</button>
+    </nav>
+    <div class="md:hidden">
+      <button onclick="toggleMobileMenu()" class="text-white text-3xl">☰</button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="mobile-menu hidden flex flex-col bg-[#111] text-white px-6 py-4 space-y-2">
+    <button onclick="showSection('cover'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">Главная</button>
+    <button onclick="showSection('book'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">Книга</button>
+    <button onclick="showSection('plan'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">Планы</button>
+    <button onclick="showSection('characters'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">Персонажи</button>
+    <button onclick="showSection('about'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">О книге</button>
+    <button onclick="showSection('contact'); toggleMobileMenu()" class="mobile-nav-btn text-left py-2">Контакты</button>
+  </div>
+</header>
+
+<!-- COVER SECTION -->
+<section id="coverSection" class="flex-grow flex items-center justify-center relative">
+  <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
+  <div class="hover-cover relative z-20">
+    <img src="photo_2025-07-01_19-05-29.jpg" alt="Обложка книги" class="w-[300px] md:w-[400px] rounded-xl shadow-xl" />
+    <button onclick="startReading()" class="read-btn absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black px-6 py-2 rounded text-xl font-semibold hover:bg-gray-200">Читать</button>
+  </div>
+</section>
+
+<!-- BOOK SECTION -->
+<section id="bookSection" class="hidden px-6 py-10 max-w-3xl mx-auto">
+  <div class="mb-6 text-gray-400">
+    <h2 class="text-xl font-semibold mb-2">Планы на следующие главы:</h2>
+    <ul class="list-disc list-inside">
+      <li>Глава 3: Подвал</li>
+      <li>Глава 4: Побег</li>
+      <li>Глава 5: Тайна крыши</li>
+    </ul>
+  </div>
+  <div id="pages">
+    <div class="page active fade-in">
+      <h2 class="text-2xl font-bold mb-4">Глава 1. Начало-конца</h2>
+      <p>Весенняя ночь, звуки города оглушают, цвет от билбордов падает прямо в сетчатку, запах уличных забегаловок перемешивается с запахом после дождя, высотки, которые поражают своей высотой, и на крыше одной из них виднелся чёрный худой силуэт. Он что-то очень громко кричал, но его слова перемешивались с городским бытом, но в них определённо слышались безысходность, печаль, сожаление, самобичевание.</p>
+      <p>По испачканному тротуару куда-то спешила красивая, но очень неряшливо одетая девушка с чёрными волосами. У неё кожа была чуть ли не бледная, но, увидев Его, она побежала на крышу этой пугающе высокой постройки.</p>
+      <p>С каждым этажом Его голос становился всё яснее, и вот на шестнадцатом этаже этой двадцатипятиэтажки голос уже стал разборчивым — он кричал: "Я не достоин жить, я уничтожил столько жизней, я Монстр!"</p>
+      <p>Она поднималась всё выше, Его голос, проникая через бетонные стены, сотрясал сердце девушки. И наконец — дверь. Она открывает её. Она открывается с таким жутким скрипом, что уши начинают свистеть.</p>
+      <p>Она стояла прямо напротив него, её руки держались вместе, сердце словно уже вырвалось наружу, и она дрожащим голосом сказала: "Уи-и-ильям?"</p>
+      <p>Он, всё приближаясь к краю, смотрел на неё: "Уходи, Эмма. Я уже испортил тебе жизнь. Либо убей меня, столкни меня… но не пытайся поймать меня."</p>
+      <p>Внезапно начался очень сильный ветер — настолько сильный, что Уильям вспомнил кое-что...</p>
+    </div>
+    <div class="page fade-in">
+      <h2 class="text-2xl font-bold mb-4">Глава 2: Происхождение</h2>
+      <h3 class="text-xl font-semibold mb-2">Часть 1 – Рождение</h3>
+      <p>Говорят, в четырнадцатое мая тысяча девятьсот девяносто девятого года была очень сильная буря — настолько сильная, что забирала с собой не только крыши домов, а и жизни людей. Но с бурей пришла одна несчастная жизнь — он родился в абсолютной разрухе. Его назвали "Уильям" в честь уборщика, так как его папа был ярым алкоголиком. Во избежание унижения ему дали фамилию матери — Джонсон.</p>
+      <p>Новорождённый ребёнок и родившая его несколько дней назад мама казались совсем ненужными. Чтобы забрать их, не приходили никакие родственники. Но что бы ни было — мать была рада своему ребёнку. Она радовалась, что она не одна в этом мире. Она верила в него. Она верила, что он вырастет достойным похвалы. И так прошли года...</p>
+    </div>
+    <div class="page fade-in">
+      <h3 class="text-xl font-semibold mb-2">Часть 2 – Добро (2006 год)</h3>
+      <p>Тёплым утром летнего дня, на окраине города была полная тишина. Слышалось только пение птиц, звук приятного ветра и голоса ребятишек, играющих на детской площадке. Но это спокойствие разорвал громкий стук в и так сломанную дверцу.</p>
+      <p>Молодая мама насторожилась и посмотрела через глазок. Она увидела своего семилетнего мальчика и державшую его тётю, которой уже за сорок. Она без раздумий открыла дверь и, обнимая плачущего ребёнка, сказала:</p>
+      <p>— Зачем так грубо?! Он ещё ребёнок. Чем он это заслужил?</p>
+      <p>— Чем? Он настоящий тиран, невоспитанный, — сказала тётя, глядя прямо в душу мальчику, и продолжила: — А так, почему я удивляюсь? Ты, по-видимому, мама этого засранца. Ещё такая молодая, но уже с прицепом... Понятно, откуда растут ноги.</p>
+      <p>На эти высказывания молодая мама разозлилась. Хотя ей и не было, что сказать, она просто хлопнула дверью прямо перед лицом этой тёти. Теперь плакал не только ребёнок, но и мать.</p>
+      <p>За дверью слышались неприятные крики, которые будто поднимали давление, и из-за них в глазах наливалась кровь. Они звучали так, будто ты слышишь умирающего осла:</p>
+      <p>— Ну вот и правда вышла наружу! А тут у нас соседка-бабочка, оказывается. Ещё какая — ночная.</p>
+      <p>Звуки утихли. Мать успокоилась, посмотрела на ребёнка и спросила:</p>
+      <p>— Что ты сделал, дорогой мой?</p>
+      <p>Писклявым голосом мальчик ответил, вытирая слёзы:</p>
+      <p>— Я просто хотел поиграть с ними, а они меня толкнули в грязь...</p>
+      <p>После этих слов ребёнок снова сильно расплакался. Мама, утешая его, сказала:</p>
+      <p>— Я знаю тебя, мой дорогой. Ты никогда никому вреда не сделаешь. Ты даже муху не обидишь. А в следующий раз, когда захочешь поиграть — сразу иди ко мне, ладно?</p>
+      <p>Ребёнок немного успокоился. Но спокойствия не продлилась долго...</p>
+    </div>
+    <div class="page fade-in">
+      <h3 class="text-xl font-semibold mb-2">Часть 3 – Начало монстра</h3>
+      <p>Но спокойствие не длилось долго. В этот раз в дверь не стучали, а как будто ударяли молотком. Мать сказала ребёнку идти в свою комнату, уже зная, что происходит.</p>
+      <p>Как только дверь распахнулась, квартира заполнилась запахом гари и алкоголя. Это был отец... если его можно так назвать.</p>
+      <p>Он поднял кулак над лицом матери и громко сказал:</p>
+      <p>— Ты грёбаная шлюха! Позорище! И тот твой щенок...</p>
+      <p>Ответ матери не заставил себя ждать:</p>
+      <p>— Щенок? Это твой сын! Как бы ты ни хотел это не признать, но природу не обмануть. И ещё мы позорим семью? Если кто-то и позорит семью — это ты, алкаш!</p>
+      <p>Отец был очень зол и начал бить жену. Но мать не волновалась о себе — она увидела в крохотных руках ребёнка нож.</p>
+      <p>Ребёнок думал: "Что мне делать? Он бьёт маму. Кто он? Нет... я не могу, я же даже муху не обижаю. Но это моя мама... Нет, я ударю... но.. мама поможет, мама помоги я хочу поиграть."</p>
+      <p>Ребёнок подходил всё ближе и ближе к мужчине. И в один момент он воткнул этот нож прямо в горло мужчине. Он продолжал ударять ножом уже издыхающее тело.</p>
+      <p>Повсюду кровь. Лицо и одежда мальчика уже впитались кровью отца. Но в комнате был не один труп... Их было два.</p>
+      <p>Ребёнок испугался. Он начал повторять себе:</p>
+      <p>— Я не успел... Нет, я должен был успеть... Нет, это не правда...</p>
+      <p>Он начал задыхаться. Его дыхание стало настолько тяжёлым, что каждый вдох и выдох был адски больным. Он не смог стерпеть. Он убежал... Далеко убежал.</p>
+    </div>
+    <div class="page fade-in text-center">
+      <p class="text-gray-300 text-lg italic">Следующая глава скоро...</p>
+    </div>
+  </div>
+  <div class="flex justify-between mt-6">
+    <button onclick="prevPage()" class="page-btn bg-gray-800 text-white px-4 py-2 rounded disabled:opacity-30" id="prevBtn">Назад</button>
+    <button onclick="nextPage()" class="page-btn bg-gray-800 text-white px-4 py-2 rounded" id="nextBtn">Вперёд</button>
+  </div>
+</section>
+
+<!-- PLAN SECTION -->
+<section id="planSection" class="hidden px-6 py-10 max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Планы</h2>
+  <p>Скоро здесь появятся планы на следующие главы!</p>
+  <ul class="list-disc list-inside text-gray-300">
+    <li>Глава 3: Подвал – раскрытие новых тайн.</li>
+    <li>Глава 4: Побег – напряжённое приключение.</li>
+    <li>Глава 5: Тайна крыши – финальная развязка.</li>
+  </ul>
+</section>
+
+<!-- CHARACTERS SECTION -->
+<section id="charactersSection" class="hidden px-6 py-10 max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Персонажи</h2>
+  <div class="characters-content">
+    <div>
+      <p>Описание ключевых персонажей книги:</p>
+      <ul class="list-disc list-inside text-gray-300">
+        <li><strong>Уильям Джонсон</strong>: Молодой человек, чья жизнь началась в трагических обстоятельствах во время бури 1999 года. В детстве он был добрым и чувствительным, неспособным обидеть даже муху, но травматические события, включая насилие со стороны отца и гибель матери, привели к его превращению в "Монстра". В первой главе он стоит на крыше, охваченный чувством вины и отчаяния, называя себя разрушителем жизней.</li>
+        <li><strong>Эмма</strong>: Красивая, но неряшливо одетая девушка с чёрными волосами и бледной кожей. Она, кажется, знает Уильяма и отчаянно пытается спасти его, поднимаясь на крышу, чтобы остановить его от рокового шага. Её связь с Уильямом пока не ясна, но она глубоко заботится о нём.</li>
+        <li><strong>Мать Уильяма</strong>: Молодая женщина, которая родила Уильяма в нищете и разрухе. Несмотря на трудности, она искренне любила сына и верила в его доброе будущее. Её жизнь оборвалась трагически из-за насилия со стороны мужа, что стало поворотным моментом для Уильяма.</li>
+        <li><strong>Отец Уильяма</strong>: Алкоголик и насильник, который жестоко обращался с женой и сыном. Его действия привели к трагедии, когда Уильям, защищая мать, убил его. Этот персонаж стал катализатором превращения Уильяма в "Монстра".</li>
+        <li><strong>Тётя</strong>: Женщина за сорок, которая грубо обращалась с Уильямом в детстве, обвиняя его в невоспитанности и унижая его мать. Её жестокие слова усилили чувство отверженности у мальчика.</li>
+      </ul>
+    </div>
+    <img src="rr.jpg" alt="Семья персонажей" />
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="aboutSection" class="hidden px-6 py-10 max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">О книге</h2>
+  <p>«Монстр с крыши» — это мрачный триллер о судьбе Уильяма Джонсона, чья жизнь началась в трагедии и продолжилась чередой потерь и боли. История исследует темы вины, искупления и влияния прошлого на настоящее. Автор: Урахара Киска, 2025.</p>
+</section>
+
+<!-- CONTACT SECTION -->
+<section id="contactSection" class="hidden px-6 py-10 max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Контакты</h2>
+  <p>Свяжитесь с автором:</p>
+  <p class="text-gray-300">Email: urahara@example.com</p>
+  <p class="text-gray-300">Социальные сети: @UraharaKiska</p>
+</section>
+
+<script>
+  function showSection(section) {
+    const all = ['coverSection', 'bookSection', 'aboutSection', 'contactSection', 'planSection', 'charactersSection'];
+    all.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) element.classList.add('hidden');
+    });
+    const target = section === 'cover' ? 'coverSection' : section + 'Section';
+    const targetElement = document.getElementById(target);
+    if (targetElement) {
+      targetElement.classList.remove('hidden');
+    } else {
+      console.error(`Секция ${target} не найдена`);
+    }
+  }
+
+  function startReading() {
+    showSection('book');
+  }
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('hidden');
+  }
+
+  const pages = document.querySelectorAll('.page');
+  let currentIndex = 0;
+
+  function updatePageVisibility() {
+    pages.forEach((p, i) => {
+      p.classList.toggle('active', i === currentIndex);
+    });
+    document.getElementById('prevBtn').disabled = currentIndex === 0;
+    document.getElementById('nextBtn').disabled = currentIndex === pages.length - 1;
+  }
+
+  function nextPage() {
+    if (currentIndex < pages.length - 1) {
+      currentIndex++;
+      updatePageVisibility();
+    }
+  }
+
+  function prevPage() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updatePageVisibility();
+    }
+  }
+
+  updatePageVisibility();
+</script>
+
+</body>
+</html>
